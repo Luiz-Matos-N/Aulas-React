@@ -4,7 +4,7 @@
 import "./App.css";
 
 //!React
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 //! 6 - Custom hook para resgate de dados
 import { useFetch } from "./hooks/useFetch";
@@ -13,10 +13,10 @@ import { useFetch } from "./hooks/useFetch";
 const url = "http://localhost:3000/products";
 
 function App() {
-  const [products, setProducts] = useState([]);
+  //const [products, setProducts] = useState([]);
 
   //! 6 - Custom hook para resgate de dados
-  const { data: items } = useFetch(url);
+  const { data: items, httpConfig, loading, error } = useFetch(url);
 
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
@@ -33,7 +33,7 @@ function App() {
     fetchData();
   }, []);*/
 
-  //! 4 - 4 - Adicionando dados com React
+  //!  4 - Adicionando dados com React
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,6 +42,8 @@ function App() {
       name,
       price,
     };
+
+    /*
     console.log(product);
     const res = await fetch(url, {
       method: "POST",
@@ -54,24 +56,38 @@ function App() {
     //! 5 - Carregamento de dados dinâmico
     const addedProduct = await res.json();
 
-    setProducts((prevProducts) => [...prevProducts, addedProduct]);
+    setProducts((prevProducts) => [...prevProducts, addedProduct]);*/
+
+    //! 7 - Refatorando o POST
+    httpConfig(product, "POST");
     setName("");
     setPrice("");
+  };
 
-    //! 6 - Custom hook para resgate de dados
+  //! 11 - Desafio 6
+  const handleRemove = (id) => {
+    httpConfig(id, "DELETE");
   };
 
   return (
     <>
       <h1>Lista de Produtos</h1>
-      <ul>
-        {items &&
-          items.map((product) => (
-            <li key={product.id}>
-              {product.name} - R$: {product.price}
-            </li>
-          ))}
-      </ul>
+      {/*   //! 8 - Estado de Loading */}
+      {loading && <p>Carregando dados...</p>}
+      {error && <p>{error}</p>}
+      {!error && (
+        <ul>
+          {items &&
+            items.map((product) => (
+              <li key={product.id}>
+                {product.name} - R$: {product.price}
+                <button onClick={() => handleRemove(product.id)}>
+                  Excluir
+                </button>
+              </li>
+            ))}
+        </ul>
+      )}
       <div className="add-products">
         <form onSubmit={handleSubmit}>
           <label>
@@ -92,7 +108,9 @@ function App() {
               onChange={(e) => setPrice(e.target.value)}
             />
           </label>
-          <input type="submit" value="Criar" />
+          {/* //! 9 - Loading no POST */}
+          {loading && <input type="submit" disabled value="Aguarde" />}
+          {!loading && <input type="submit" value="Criar" />}
         </form>
       </div>
     </>
