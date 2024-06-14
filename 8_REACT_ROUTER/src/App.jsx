@@ -7,10 +7,10 @@ import "./App.css";
 //!React
 
 //! Data
-const url = "http://localhost:3000/products";
+//const url = "http://localhost:3000/products";
 
 //! 2 - Configurando o React Router
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 //! Pages
 import Home from "./pages/Home";
@@ -40,6 +40,8 @@ function App() {
             <Route path="/products/:id/info" element={<Info />} />
             {/*//!10 - Search Params */}
             <Route path="/search" element={<Search />} />
+            {/* //! 11 - Redirecionamento de URL */}
+            <Route path="/company" element={<Navigate to="/about" />} />
             {/* //! 8 - Página 404 */}
             <Route path="*" element={<NotFound />} />
           </Routes>
