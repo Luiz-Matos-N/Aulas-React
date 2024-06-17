@@ -14,9 +14,7 @@ export const useAuthentication = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(null);
 
-  //cleanup
-
-  //deal with memory leak
+  // deal with memory leak
   const [cancelled, setCancelled] = useState(false);
 
   const auth = getAuth();
@@ -27,11 +25,11 @@ export const useAuthentication = () => {
     }
   }
 
+  //!Register
   const createUser = async (data) => {
     checkIfIsCancelled();
 
     setLoading(true);
-    setError(null);
 
     try {
       const { user } = await createUserWithEmailAndPassword(
@@ -40,9 +38,9 @@ export const useAuthentication = () => {
         data.password
       );
 
-      await updateProfile(user, { displayName: data.displayName });
-
-      setLoading(false);
+      await updateProfile(user, {
+        displayName: data.displayName,
+      });
 
       return user;
     } catch (error) {
@@ -54,16 +52,56 @@ export const useAuthentication = () => {
       if (error.message.includes("Password")) {
         systemErrorMessage = "A senha precisa conter pelo menos 6 caracteres.";
       } else if (error.message.includes("email-already")) {
-        systemErrorMessage = "Email já cadastrado.";
+        systemErrorMessage = "E-mail já cadastrado.";
       } else {
-        systemErrorMessage = "Ocorreu um erro, por favor tente mais tarde.";
+        systemErrorMessage = "Ocorreu um erro, por favor tenta mais tarde.";
       }
 
-      setLoading(false);
       setError(systemErrorMessage);
     }
+
+    setLoading(false);
   };
 
+  //!Logout - sign out
+  const logout = () => {
+    checkIfIsCancelled();
+
+    signOut(auth);
+  };
+
+  //!login - sign in
+  const login = async (data) => {
+    checkIfIsCancelled();
+
+    setLoading(true);
+    setError(false);
+
+    try {
+      await signInWithEmailAndPassword(auth, data.email, data.password);
+    } catch (error) {
+      console.log(error.message);
+      console.log(typeof error.message);
+      console.log(error.message.includes("user-not"));
+
+      let systemErrorMessage;
+
+      if (error.message.includes("invalid-credential")) {
+        systemErrorMessage = "Usuário ou senha incorreta.";
+      } else {
+        systemErrorMessage = "Ocorreu um erro, por favor tenta mais tarde.";
+      }
+
+      console.log(systemErrorMessage);
+      console.log(error);
+
+      setError(systemErrorMessage);
+    }
+
+    console.log(error);
+
+    setLoading(false);
+  };
   useEffect(() => {
     return () => setCancelled(true);
   }, []);
@@ -73,5 +111,7 @@ export const useAuthentication = () => {
     createUser,
     error,
     loading,
+    logout,
+    login,
   };
 };
