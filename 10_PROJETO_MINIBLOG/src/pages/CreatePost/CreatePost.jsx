@@ -103,7 +103,7 @@ const CreatePost = () => {
 
         {!response.loading && (
           <button type="submit" className="btn">
-            Cadastrar
+            Postar!
           </button>
         )}
         {response.loading && (
