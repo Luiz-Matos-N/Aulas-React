@@ -14,7 +14,7 @@ const About = () => {
         no back-end.
       </p>
       <Link to="/posts/create" className="btn">
-        Criar post
+        Criar post!
       </Link>
     </div>
   );
