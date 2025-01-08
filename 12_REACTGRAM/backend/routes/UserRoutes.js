@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
 
-//Controller
+// Controller
 const {
   register,
-  login,
   getCurrentUser,
+  login,
   update,
   getUserById,
 } = require("../controllers/UserController");
